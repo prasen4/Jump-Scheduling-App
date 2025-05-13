@@ -1,6 +1,6 @@
 # Scheduler - Meeting Scheduling Tool
 
-A powerful scheduling tool for advisors to meet with their clients, built with Next.js, TypeScript, and Tailwind CSS.
+A scheduling tool for advisors to meet with their clients, built with Next.js, TypeScript, and Tailwind CSS.
 
 ## Features
 
