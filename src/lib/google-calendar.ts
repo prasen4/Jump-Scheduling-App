@@ -42,7 +42,9 @@ export async function getGoogleCalendarClient(userId: string) {
       });
 
       // Use the new credentials
-      account.access_token = credentials.access_token;
+      if (credentials.access_token) {
+        account.access_token = credentials.access_token;
+      }
       account.refresh_token = credentials.refresh_token || account.refresh_token;
       account.expires_at = credentials.expiry_date ? Math.floor(credentials.expiry_date / 1000) : null;
     } catch (error) {

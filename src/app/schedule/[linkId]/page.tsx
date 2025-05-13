@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { format, addDays, parseISO, isAfter, isBefore, startOfDay } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
@@ -39,19 +39,7 @@ export default function SchedulePage() {
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (linkId) {
-      fetchLinkDetails();
-    }
-  }, [linkId]);
-
-  useEffect(() => {
-    if (selectedDate && link) {
-      fetchAvailableSlots();
-    }
-  }, [selectedDate, link]);
-
-  const fetchLinkDetails = async () => {
+  const fetchLinkDetails = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -78,9 +66,9 @@ export default function SchedulePage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [linkId]);
 
-  const fetchAvailableSlots = async () => {
+  const fetchAvailableSlots = useCallback(async () => {
     if (!selectedDate || !link) return;
 
     setIsLoadingSlots(true);
@@ -106,7 +94,19 @@ export default function SchedulePage() {
     } finally {
       setIsLoadingSlots(false);
     }
-  };
+  }, [selectedDate, link, linkId]);
+
+  useEffect(() => {
+    if (linkId) {
+      fetchLinkDetails();
+    }
+  }, [linkId, fetchLinkDetails]);
+
+  useEffect(() => {
+    if (selectedDate && link) {
+      fetchAvailableSlots();
+    }
+  }, [selectedDate, link, fetchAvailableSlots]);
 
   const isDateDisabled = (date: Date) => {
     if (!link) return true;

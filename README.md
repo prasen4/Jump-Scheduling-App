@@ -63,7 +63,7 @@ SMTP_PASSWORD="your-gmail-app-specific-password"
 
 2. Install dependencies:
    ```bash
-   npm install --legacy-peer-deps
+   npm install
    ```
 
 3. Set up the database:

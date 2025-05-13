@@ -90,7 +90,9 @@ export async function POST(request: Request) {
         });
 
         // Use the new credentials
-        googleAccount.access_token = credentials.access_token;
+        if (credentials.access_token) {
+          googleAccount.access_token = credentials.access_token;
+        }
         googleAccount.refresh_token = credentials.refresh_token || googleAccount.refresh_token;
         googleAccount.expires_at = credentials.expiry_date ? Math.floor(credentials.expiry_date / 1000) : null;
       } catch (error) {

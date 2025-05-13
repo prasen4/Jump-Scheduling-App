@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 import { findContactByEmail, getContactNotes } from '@/lib/hubspot';
-import { scrapeLinkedInProfile } from '@/lib/linkedin';
+import { getLinkedInProfileSummary } from '@/lib/linkedin';
 import { createCalendarEvent } from '@/lib/google-calendar';
 import { sendSchedulingNotification } from '@/lib/email';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
@@ -50,7 +50,10 @@ export async function POST(request: Request) {
       const hubspotContact = await findContactByEmail(validatedData.attendeeEmail, schedulingLink.userId);
       if (hubspotContact) {
         const notes = await getContactNotes(hubspotContact.id, schedulingLink.userId);
-        hubspotContext = notes.map(note => note.content).join('\n\n');
+        hubspotContext = notes
+          .map(note => note.properties?.hs_note_body || '')
+          .filter(content => content)
+          .join('\n\n');
       }
     } catch (error) {
       console.error('Error getting HubSpot context:', error);
@@ -61,7 +64,7 @@ export async function POST(request: Request) {
     let linkedinContext = '';
     if (validatedData.attendeeLinkedIn) {
       try {
-        linkedinContext = await scrapeLinkedInProfile(validatedData.attendeeLinkedIn);
+        linkedinContext = await getLinkedInProfileSummary(validatedData.attendeeLinkedIn);
       } catch (error) {
         console.error('Error getting LinkedIn context:', error);
         // Continue without LinkedIn context

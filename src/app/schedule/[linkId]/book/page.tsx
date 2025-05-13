@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { format, parseISO } from 'date-fns';
 import { toast } from 'react-hot-toast';
@@ -26,11 +26,7 @@ export default function BookingPage() {
     answers: {} as Record<string, string>,
   });
 
-  useEffect(() => {
-    fetchLinkDetails();
-  }, [linkId]);
-
-  const fetchLinkDetails = async () => {
+  const fetchLinkDetails = useCallback(async () => {
     try {
       const response = await fetch(`/api/scheduling-links/${linkId}`);
       if (!response.ok) throw new Error('Failed to fetch link details');
@@ -49,7 +45,11 @@ export default function BookingPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [linkId]);
+
+  useEffect(() => {
+    fetchLinkDetails();
+  }, [fetchLinkDetails]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -18,10 +18,10 @@ export default function Success() {
         </svg>
         <h1 className="mt-4 text-2xl font-bold text-gray-900">Meeting Scheduled!</h1>
         <p className="mt-2 text-gray-600">
-          You will receive an email confirmation with the meeting details shortly.
+          You&apos;ll receive an email confirmation with the meeting details shortly.
         </p>
         <p className="mt-4 text-sm text-gray-500">
-          The meeting has been added to both your and the advisor's calendar.
+          The meeting has been added to both your and the advisor&apos;s calendar.
         </p>
       </div>
     </div>

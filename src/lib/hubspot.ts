@@ -1,5 +1,7 @@
 import { Client } from '@hubspot/api-client';
 import { prisma } from '@/lib/prisma';
+import { FilterOperatorEnum } from '@hubspot/api-client/lib/codegen/crm/contacts';
+import { PublicObjectSearchRequest } from '@hubspot/api-client/lib/codegen/crm/objects/notes';
 
 async function getHubSpotClient(userId: string) {
   const account = await prisma.account.findFirst({
@@ -43,17 +45,18 @@ async function getHubSpotClient(userId: string) {
 export async function findContactByEmail(email: string, userId: string) {
   try {
     const hubspotClient = await getHubSpotClient(userId);
-    const apiResponse = await hubspotClient.crm.contacts.searchApi.doSearch({
+    const searchResponse = await hubspotClient.crm.contacts.searchApi.doSearch({
       filterGroups: [{
         filters: [{
           propertyName: 'email',
-          operator: 'EQ',
+          operator: FilterOperatorEnum.Eq,
           value: email
         }]
-      }]
+      }],
+      properties: ['firstname', 'lastname', 'email', 'company', 'jobtitle', 'notes_last_contacted', 'notes_last_updated', 'notes_next_activity_date']
     });
     
-    return apiResponse.results[0];
+    return searchResponse.results[0];
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === 'HubSpot not connected' ||
@@ -73,16 +76,13 @@ export async function findContactByEmail(email: string, userId: string) {
 export async function getContactNotes(contactId: string, userId: string) {
   try {
     const hubspotClient = await getHubSpotClient(userId);
-    const apiResponse = await hubspotClient.crm.objects.notes.basicApi.getPage(
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      { associations: [{ to: 'contact', ids: [contactId] }] }
-    );
-    return apiResponse.results;
+    const searchResponse = await hubspotClient.crm.objects.notes.searchApi.doSearch({
+      filterGroups: [],
+      sorts: ['hs_lastmodifieddate'],
+      properties: ['hs_note_body', 'hs_lastmodifieddate'],
+      limit: 10
+    } as PublicObjectSearchRequest);
+    return searchResponse.results;
   } catch (error) {
     if (error instanceof Error) {
       if (error.message === 'HubSpot not connected' ||
