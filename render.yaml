@@ -3,6 +3,14 @@ services:
     name: scheduler-jump
     env: node
     buildCommand: |
+      if [ -z "$GOOGLE_CLIENT_ID" ] || [ -z "$GOOGLE_CLIENT_SECRET" ] || [ -z "$NEXTAUTH_URL" ] || [ -z "$NEXTAUTH_SECRET" ]; then
+        echo "Error: Required environment variables are not set"
+        echo "GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:+set}${GOOGLE_CLIENT_ID:-not set}"
+        echo "GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:+set}${GOOGLE_CLIENT_SECRET:-not set}"
+        echo "NEXTAUTH_URL: ${NEXTAUTH_URL:+set}${NEXTAUTH_URL:-not set}"
+        echo "NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:+set}${NEXTAUTH_SECRET:-not set}"
+        exit 1
+      fi
       npm install
       npx prisma generate
       npx prisma migrate reset --force
