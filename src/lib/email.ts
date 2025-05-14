@@ -87,7 +87,7 @@ export async function sendSchedulingNotification(userEmail: string, {
     additionalContext.push('HubSpot Notes:\n' + hubspotContext);
   }
   if (linkedinContext) {
-    additionalContext.push('LinkedIn Profile Summary:\n' + linkedinContext);
+    additionalContext.push('LinkedIn Profile:\n' + linkedinContext);
   }
 
   try {

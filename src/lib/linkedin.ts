@@ -118,20 +118,25 @@ LinkedIn ID: ${profile.sub || 'N/A'}
 
 export async function getLinkedInProfileSummary(linkedinUrl: string): Promise<string> {
   try {
-    // Use OpenAI to generate a summary
+    const username = extractLinkedInUsername(linkedinUrl);
+    if (!username) {
+      return 'Invalid LinkedIn URL format';
+    }
+
+    // Use OpenAI to generate a summary focused on the profile URL
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
         {
           role: "system",
-          content: "You are a professional summarizer. Create a concise summary of this LinkedIn profile information, focusing on key points that might be relevant for a meeting context. Include any notable career achievements, current role, and relevant background that could inform the meeting discussion."
+          content: "You are a helpful assistant that provides a brief note about a LinkedIn profile URL. Keep it very short and focused on the username/profile section of the URL."
         },
         {
           role: "user",
-          content: linkedinUrl
+          content: `LinkedIn profile: ${linkedinUrl}\nUsername: ${username}`
         }
       ],
-      max_tokens: 100
+      max_tokens: 50
     });
 
     return completion.choices[0]?.message?.content || 'Unable to generate summary';
