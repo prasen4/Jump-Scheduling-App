@@ -22,7 +22,6 @@ export default function Dashboard() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [recentMeetings, setRecentMeetings] = useState<Meeting[]>([]);
   const [isConnectingHubSpot, setIsConnectingHubSpot] = useState(false);
-  const [isConnectingLinkedIn, setIsConnectingLinkedIn] = useState(false);
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -59,26 +58,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleConnectLinkedIn = async () => {
-    setIsConnectingLinkedIn(true);
-    try {
-      const response = await fetch('/api/linkedin/auth');
-      if (!response.ok) {
-        throw new Error('Failed to initiate LinkedIn connection');
-      }
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      window.location.href = data.authUrl;
-    } catch (error) {
-      console.error('Error initiating LinkedIn connection:', error);
-      setIsConnectingLinkedIn(false);
-    }
-  };
-
   const isHubSpotConnected = accounts.some(account => account.provider === 'hubspot');
-  const isLinkedInConnected = accounts.some(account => account.provider === 'linkedin');
   const isGoogleConnected = accounts.some(account => account.provider === 'google');
 
   if (!session) {
@@ -102,16 +82,6 @@ export default function Dashboard() {
       {searchParams.get('error') === 'hubspot_auth_failed' && (
         <div className="bg-red-50 p-4 rounded-md">
           <p className="text-red-800">Failed to connect to HubSpot. Please try again.</p>
-        </div>
-      )}
-      {searchParams.get('success') === 'linkedin_connected' && (
-        <div className="bg-green-50 p-4 rounded-md">
-          <p className="text-green-800">Successfully connected to LinkedIn!</p>
-        </div>
-      )}
-      {searchParams.get('error') === 'linkedin_auth_failed' && (
-        <div className="bg-red-50 p-4 rounded-md">
-          <p className="text-red-800">Failed to connect to LinkedIn. Please try again.</p>
         </div>
       )}
 
@@ -138,22 +108,6 @@ export default function Dashboard() {
                   className="text-blue-600 hover:text-blue-800 text-sm font-medium disabled:opacity-50"
                 >
                   {isConnectingHubSpot ? 'Connecting...' : 'Connect'}
-                </button>
-              )}
-            </div>
-
-            {/* LinkedIn Account Status */}
-            <div className="flex items-center justify-between">
-              <span className="text-gray-600">LinkedIn</span>
-              {isLinkedInConnected ? (
-                <span className="text-sm text-green-600">Connected</span>
-              ) : (
-                <button
-                  onClick={handleConnectLinkedIn}
-                  disabled={isConnectingLinkedIn}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium disabled:opacity-50"
-                >
-                  {isConnectingLinkedIn ? 'Connecting...' : 'Connect'}
                 </button>
               )}
             </div>
