@@ -6,7 +6,23 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import SessionProvider from '@/components/SessionProvider';
 import Navbar from '@/components/Navbar';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  fallback: [
+    '-apple-system',
+    'BlinkMacSystemFont',
+    'Segoe UI',
+    'Roboto',
+    'Oxygen',
+    'Ubuntu',
+    'Cantarell',
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    'sans-serif'
+  ],
+});
 
 export const metadata = {
   title: 'Scheduler Jump',
