@@ -13,8 +13,10 @@ services:
       fi
       npm install
       npx prisma generate
-      echo "Pushing database schema..."
-      npx prisma db push --accept-data-loss --force-reset
+      echo "Running database migrations..."
+      npx prisma migrate deploy
+      echo "Ensuring schema synchronization..."
+      npx prisma db push --accept-data-loss
       npm run build
     startCommand: npm start
     envVars:
