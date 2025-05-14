@@ -2,11 +2,13 @@ services:
   - type: web
     name: scheduler-jump
     env: node
-    buildCommand: npm install && npx prisma generate && npx prisma migrate deploy && npm run build
+    buildCommand: npm install && npx prisma generate && npm run build && npx prisma migrate deploy
     startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
+      - key: NEXTAUTH_URL
+        value: https://jump-scheduling-app-2.onrender.com
       - key: DATABASE_URL
         fromDatabase:
           name: scheduler-db
